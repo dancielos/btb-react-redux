@@ -7,7 +7,7 @@ const ProductItem = (props) => {
 	const { id, name, price, description } = props;
 
 	const cart = useSelector((state) => state.cart);
-	console.log(cart);
+	// console.log(cart);
 
 	const dispatch = useDispatch();
 
