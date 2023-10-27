@@ -18,9 +18,6 @@ const cartSlice = createSlice({
 	name: 'cart',
 	initialState,
 	reducers: {
-		toggle(state) {
-			state.isCartOpen = !state.isCartOpen;
-		},
 		addItem(state, action) {
 			const currentItems = [...state.items];
 
