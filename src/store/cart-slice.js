@@ -9,10 +9,10 @@ import { uiActions } from './ui-slice';
 // };
 
 const initialState = {
-	isCartOpen: false,
 	items: [],
 	totalQuantity: 0,
 	totalPrice: 0,
+	changed: false,
 };
 
 const cartSlice = createSlice({
@@ -20,6 +20,8 @@ const cartSlice = createSlice({
 	initialState,
 	reducers: {
 		addItem(state, action) {
+			state.changed = true;
+
 			const currentItems = [...state.items];
 
 			const itemIndex = currentItems.findIndex(
@@ -37,7 +39,14 @@ const cartSlice = createSlice({
 			state.totalQuantity += 1;
 			state.items = [...currentItems];
 		},
+		replaceCart(state, action) {
+			state.totalQuantity = action.payload.totalQuantity;
+			state.totalPrice = action.payload.totalPrice;
+			state.items = action.payload.items;
+			state.changed = false;
+		},
 		incrementItem(state, action) {
+			state.changed = true;
 			const currentItems = [...state.items];
 
 			const itemIndex = currentItems.findIndex(
@@ -51,6 +60,7 @@ const cartSlice = createSlice({
 			state.items = [...currentItems];
 		},
 		decrementItem(state, action) {
+			state.changed = true;
 			const currentItems = [...state.items];
 
 			const itemIndex = currentItems.findIndex(
@@ -67,45 +77,6 @@ const cartSlice = createSlice({
 		},
 	},
 });
-
-export const sendCartData = function (cart) {
-	return async (dispatch) => {
-		try {
-			dispatch(
-				uiActions.showNotification({
-					status: 'pending',
-					title: 'Sending...',
-					message: 'Sending cart data!',
-				})
-			);
-			const response = await fetch(
-				'https://practice-redux-2f6cf-default-rtdb.firebaseio.com/cart.json',
-				{ method: 'PUT', body: JSON.stringify(cart) }
-			);
-
-			if (!response.ok) {
-				throw new Error('Sending cart data failed.');
-			}
-
-			// const resData = await response.json();
-			dispatch(
-				uiActions.showNotification({
-					status: 'success',
-					title: 'Success!',
-					message: 'Successfully sent cart data.',
-				})
-			);
-		} catch (err) {
-			dispatch(
-				uiActions.showNotification({
-					status: 'error',
-					title: 'Error!',
-					message: 'Failed to send cart data. \n' + err,
-				})
-			);
-		}
-	};
-};
 
 export const cartActions = cartSlice.actions;
 export default cartSlice.reducer;
